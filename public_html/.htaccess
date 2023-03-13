@@ -1,6 +1,2 @@
 SetEnvIf Request_URI ".*" Ngx_Cache_NoCacheMode=off
 SetEnvIf Request_URI ".*" Ngx_Cache_AllCacheMode
-AuthUserFile "/home/xs692354/printable.jp/htpasswd/.htpasswd"
-AuthName "Member Site"
-AuthType BASIC
-require valid-user

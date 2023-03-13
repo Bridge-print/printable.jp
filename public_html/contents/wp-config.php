@@ -26,16 +26,16 @@
 
 // ** データベース設定 - この情報はホスティング先から入手してください。 ** //
 /** WordPress のためのデータベース名 */
-define( 'DB_NAME', 'xs692354_wp1' );
+define( 'DB_NAME', 'wordpress' );
 
 /** データベースのユーザー名 */
-define( 'DB_USER', 'xs692354_wp1' );
+define( 'DB_USER', 'wordpress' );
 
 /** データベースのパスワード */
-define( 'DB_PASSWORD', 'qgi4a516bd' );
+define( 'DB_PASSWORD', 'wordpress' );
 
 /** データベースのホスト名 */
-define( 'DB_HOST', 'localhost' );
+define( 'DB_HOST', 'db' );
 
 /** データベースのテーブルを作成する際のデータベースの文字セット */
 define( 'DB_CHARSET', 'utf8' );
@@ -82,7 +82,7 @@ $table_prefix = 'wp_';
  *
  * @link https://ja.wordpress.org/support/article/debugging-in-wordpress/
  */
-define( 'WP_DEBUG', false );
+define( 'WP_DEBUG', true );
 
 /* カスタム値は、この行と「編集が必要なのはここまでです」の行の間に追加してください。 */
 

@@ -1,0 +1,71 @@
+version: '3'
+
+networks:
+  backend:
+    driver: bridge
+
+volumes:
+   db_data:
+     driver: local
+
+services:
+   db:
+     image: mysql:5.7
+     container_name: printable_wp_db
+     volumes:
+       - db_data:/var/lib/mysql
+     restart: always
+     environment:
+       MYSQL_ROOT_PASSWORD: somewordpress
+       MYSQL_DATABASE: wordpress
+       MYSQL_USER: wordpress
+       MYSQL_PASSWORD: wordpress
+     ports:
+       - 3306:3306
+     networks:
+       - backend
+     volumes:
+       - ../wp_data:/var/wp_data
+
+   printable:
+     container_name: printable_web
+     build:
+       context: .
+       args:
+         # ビルド時のECCubeインストールスクリプトをスキップする場合にtrueを指定する。
+         # ビルド時点でDBサーバの起動や接続が出来ない、という場合等にエラーとなるため。
+         SKIP_INSTALL_SCRIPT_ON_DOCKER_BUILD: "true"
+     links:
+       - db:db
+     depends_on:
+       - db
+     ports:
+       - "8000:80"
+     restart: always
+     environment:
+       WORDPRESS_DB_HOST: db:3306
+       WORDPRESS_DB_USER: wordpress
+       WORDPRESS_DB_PASSWORD: wordpress
+     networks:
+       - backend
+     volumes:
+       - .:/home/xs692354/printable.jp/public_html
+
+   phpmyadmin:
+     image: phpmyadmin/phpmyadmin:latest
+     container_name: phpmyadmin_ingrid
+     restart: always
+     ports:
+       - 4000:80
+     links:
+       - db:db
+     environment:
+       - PMA_ARBITRARY=1
+       - PMA_HOST=db
+       - PMA_USER=wordpress
+       - PMA_PASSWORD=wordpress
+     restart: always
+     depends_on:
+       - db
+     networks:
+       - backend
