@@ -1,46 +1,33 @@
 SetEnvIf Request_URI ".*" Ngx_Cache_NoCacheMode=off
 SetEnvIf Request_URI ".*" Ngx_Cache_AllCacheMode
-AuthUserFile "/home/xs692354/printable.jp/htpasswd/.htpasswd"
-AuthName "Member Site"
-AuthType BASIC
-require valid-user
-
 DirectoryIndex index.php index.html .ht
-
 <Files ~ "/index.php">
     order deny,allow
     allow from all
 </Files>
-
 <FilesMatch "(?<!\.gif|\.png|\.jpg|\.jpeg|\.css|\.ico|\.js|\.svg|\.map)$">
     SetEnvIf Request_URI "/vendor/" deny_dir
     Order allow,deny
     Deny from env=deny_dir
     Allow from all
 </FilesMatch>
-
 <FilesMatch "^composer|^COPYING|^\.env|^\.maintenance|^Procfile|^app\.json|^gulpfile\.js|^package\.json|^package-lock\.json|web\.config|^Dockerfile|^\.editorconfig|\.(ini|lock|dist|git|sh|bak|swp|env|twig|yml|yaml|dockerignore|sample)$">
     order allow,deny
     deny from all
 </FilesMatch>
-
 <IfModule mod_setenvif.c>
   SetEnvIf Request_URI "\.(jpe?g|png)$" _image_request
 </IfModule>
-
 <IfModule mod_headers.c>
-    # ã‚¯ãƒªãƒƒã‚¯ã‚¸ãƒ£ãƒƒã‚­ãƒ³ã‚°å¯¾ç­–
+    # ¥¯¥ê¥Ã¥¯¥¸¥ã¥Ã¥­¥ó¥°ÂĞºö
     Header always set X-Frame-Options SAMEORIGIN
-
-    # XSSå¯¾ç­–
+    # XSSÂĞºö
     Header set X-XSS-Protection "1; mode=block"
     Header set X-Content-Type-Options nosniff
-
-    #webpã«varay
+    #webp¤Ëvaray
     Header append Vary Accept env=_image_request
 </IfModule>
-
-# ãƒ‡ã‚¶ã‚¤ãƒ³ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆã‚’é©ç”¨ã™ã‚‹ãŸã‚10Mã§è¨­å®š
+# ¥Ç¥¶¥¤¥ó¥Æ¥ó¥×¥ì¡¼¥È¤òÅ¬ÍÑ¤¹¤ë¤¿¤á10M¤ÇÀßÄê
 ## PHP 7.x
 <IfModule mod_php7.c>
     php_value post_max_size 10M
@@ -51,29 +38,34 @@ DirectoryIndex index.php index.html .ht
     php_value post_max_size 10M
     php_value upload_max_filesize 10M
 </IfModule>
-
 <IfModule mod_rewrite.c>
-    #403 Forbiddenå¯¾å¿œæ–¹æ³•
-    #ãƒšãƒ¼ã‚¸ã‚¢ã‚¯ã‚»ã‚¹ã§ããªã„æ™‚ã‚·ãƒ³ãƒœãƒªãƒƒã‚¯ãƒªãƒ³ã‚¯ãŒæœ‰åŠ¹ã«ãªã£ã¦ã„ãªã„å¯èƒ½æ€§ã‚ã‚Šã¾ã™ã€
-    #ã‚ªãƒ—ã‚·ãƒ§ãƒ³ã‚’è¿½åŠ ã—ã¦ãã ã•ã„
+    #403 ForbiddenÂĞ±şÊıË¡
+    #¥Ú¡¼¥¸¥¢¥¯¥»¥¹¤Ç¤­¤Ê¤¤»ş¥·¥ó¥Ü¥ê¥Ã¥¯¥ê¥ó¥¯¤¬Í­¸ú¤Ë¤Ê¤Ã¤Æ¤¤¤Ê¤¤²ÄÇ½À­¤¢¤ê¤Ş¤¹¡¢
+    #¥ª¥×¥·¥ç¥ó¤òÄÉ²Ã¤·¤Æ¤¯¤À¤µ¤¤
     #Options +FollowSymLinks +SymLinksIfOwnerMatch
-
     RewriteEngine On
-
-    # SSLå¼·åˆ¶
+    # SSL¶¯À©
     RewriteCond %{HTTPS} !=on [NC]
     RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
-
-    # Acceptãƒ˜ãƒƒãƒ€ãŒimage/webpã‚’å«ã‚€å ´åˆ
+    # ECcube¤Ø¥³¥ó¥Æ¥ó¥Ä¤òÆş¤ì¤ë¤Ş¤Ç¡¢Wordpress¤Ø¥ê¥À¥¤¥ì¥¯¥È
+    RewriteCond %{REQUEST_FILENAME} !^(.*)\.(gif|png|jpe?g|css|ico|js|svg|map)$ [NC]
+    RewriteCond %{REQUEST_URI} ^/products.*$ [OR]
+    RewriteCond %{REQUEST_URI} ^/help.*$ [OR]
+    RewriteCond %{REQUEST_URI} ^/contact.*$ [OR]
+    RewriteCond %{REQUEST_URI} ^/entry.*$ [OR]
+    RewriteCond %{REQUEST_URI} ^/mypage.*$ [OR]
+    RewriteCond %{REQUEST_URI} ^/cart.*$ [OR]
+    RewriteCond %{REQUEST_URI} ^/shopping.*$
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}/contents [R=302,L]
+    # ¤³¤³¤Ş¤Ç-- ECcube¤Ø¥³¥ó¥Æ¥ó¥Ä¤òÆş¤ì¤ë¤Ş¤Ç¡¢Wordpress¤Ø¥ê¥À¥¤¥ì¥¯¥È
+    # Accept¥Ø¥Ã¥À¤¬image/webp¤ò´Ş¤à¾ì¹ç
     RewriteCond %{HTTP_ACCEPT} image/webp
     RewriteCond %{SCRIPT_FILENAME}.webp -f
-    # *.jpgã€*.pngãƒ•ã‚¡ã‚¤ãƒ«ã‚’*.webpãƒ•ã‚¡ã‚¤ãƒ«ã«å†…éƒ¨çš„ã«ãƒ«ãƒ¼ãƒ†ã‚£ãƒ³ã‚°ã™ã‚‹
+    # *.jpg¡¢*.png¥Õ¥¡¥¤¥ë¤ò*.webp¥Õ¥¡¥¤¥ë¤ËÆâÉôÅª¤Ë¥ë¡¼¥Æ¥£¥ó¥°¤¹¤ë
     RewriteRule .(jpe?g|png)$ %{SCRIPT_FILENAME}.webp [T=image/webp]
-
-    # Authorization ãƒ˜ãƒƒãƒ€ãŒå–å¾—ã§ããªã„ç’°å¢ƒã¸ã®å¯¾å¿œ
+    # Authorization ¥Ø¥Ã¥À¤¬¼èÆÀ¤Ç¤­¤Ê¤¤´Ä¶­¤Ø¤ÎÂĞ±ş
     RewriteCond %{HTTP:Authorization} ^(.*)
     RewriteRule ^(.*) - [E=HTTP_AUTHORIZATION:%1]
-
     RewriteRule "^\.git" - [F]
     RewriteRule "^src/" - [F]
     RewriteRule "^app/" - [F]
@@ -87,27 +79,24 @@ DirectoryIndex index.php index.html .ht
     RewriteRule "^dockerbuild/" - [F]
     RewriteRule "^\.devcontainer/" - [F]
     RewriteRule "^zap/" - [F]
-
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !^(.*)\.(gif|png|jpe?g|css|ico|js|svg|map)$ [NC]
     RewriteRule ^(.*)$ index.php [QSA,L]
 </IfModule>
 <IfModule mod_mime.c>
-  # æ‹¡å¼µå­.webpãƒ•ã‚¡ã‚¤ãƒ«ã¯Content-Typeã¨ã—ã¦image/webpã‚’è¿”ã™
+  # ³ÈÄ¥»Ò.webp¥Õ¥¡¥¤¥ë¤ÏContent-Type¤È¤·¤Æimage/webp¤òÊÖ¤¹
   AddType image/webp .webp
 </IfModule>
-
-# ç®¡ç†ç”»é¢ã¸ã®Basicèªè¨¼ã‚µãƒ³ãƒ—ãƒ«
+# ´ÉÍı²èÌÌ¤Ø¤ÎBasicÇ§¾Ú¥µ¥ó¥×¥ë
 #
-# AuthType Basic
-# AuthName "Please enter username and password"
-# AuthUserFile /path/to/.htpasswd
-# AuthGroupFile /dev/null
-# require valid-user
-#
-# SetEnvIf Request_URI "^/admin" admin_path  # ^/adminã¯, ç®¡ç†ç”»é¢URLã«å¿œã˜ã¦å¤‰æ›´ã—ã¦ãã ã•ã„
-# <RequireAll>
-#     Require all granted
-#     Require not env admin_path
-# </RequireAll>
+ AuthType Basic
+ AuthName "Please enter username and password"
+ AuthUserFile /home/xs692354/printable.jp/htpasswd/.htpasswd
+ AuthGroupFile /dev/null
+ require valid-user
 
+ SetEnvIf Request_URI "^/administrator" admin_path  # ^/admin¤Ï, ´ÉÍı²èÌÌURL¤Ë±ş¤¸¤ÆÊÑ¹¹¤·¤Æ¤¯¤À¤µ¤¤
+ <RequireAll>
+     Require all granted
+     Require not env admin_path
+ </RequireAll>
