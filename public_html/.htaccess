@@ -48,15 +48,15 @@ DirectoryIndex index.php index.html .ht
     RewriteCond %{HTTPS} !=on [NC]
     RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
     # ECcubeへコンテンツを入れるまで、Wordpressへリダイレクト
-    RewriteCond %{REQUEST_FILENAME} !^(.*)\.(gif|png|jpe?g|css|ico|js|svg|map)$ [NC]
-    RewriteCond %{REQUEST_URI} ^/products.*$ [OR]
-    RewriteCond %{REQUEST_URI} ^/help.*$ [OR]
-    RewriteCond %{REQUEST_URI} ^/contact.*$ [OR]
-    RewriteCond %{REQUEST_URI} ^/entry.*$ [OR]
-    RewriteCond %{REQUEST_URI} ^/mypage.*$ [OR]
-    RewriteCond %{REQUEST_URI} ^/cart.*$ [OR]
-    RewriteCond %{REQUEST_URI} ^/shopping.*$
-    RewriteRule ^(.*)$ https://%{HTTP_HOST}/contents [R=302,L]
+#     RewriteCond %{REQUEST_FILENAME} !^(.*)\.(gif|png|jpe?g|css|ico|js|svg|map)$ [NC]
+#     RewriteCond %{REQUEST_URI} ^/products.*$ [OR]
+#     RewriteCond %{REQUEST_URI} ^/help.*$ [OR]
+#     RewriteCond %{REQUEST_URI} ^/contact.*$ [OR]
+#     RewriteCond %{REQUEST_URI} ^/entry.*$ [OR]
+#     RewriteCond %{REQUEST_URI} ^/mypage.*$ [OR]
+#     RewriteCond %{REQUEST_URI} ^/cart.*$ [OR]
+#     RewriteCond %{REQUEST_URI} ^/shopping.*$
+#     RewriteRule ^(.*)$ https://%{HTTP_HOST}/contents [R=302,L]
     # ここまで-- ECcubeへコンテンツを入れるまで、Wordpressへリダイレクト
     # Acceptヘッダがimage/webpを含む場合
     RewriteCond %{HTTP_ACCEPT} image/webp
@@ -89,14 +89,14 @@ DirectoryIndex index.php index.html .ht
 </IfModule>
 # 管理画面へのBasic認証サンプル
 #
- AuthType Basic
- AuthName "Please enter username and password"
- AuthUserFile /home/xs692354/printable.jp/htpasswd/.htpasswd
- AuthGroupFile /dev/null
- require valid-user
-
- SetEnvIf Request_URI "^/administrator" admin_path  # ^/adminは, 管理画面URLに応じて変更してください
- <RequireAll>
-     Require all granted
-     Require not env admin_path
- </RequireAll>
+#  AuthType Basic
+#  AuthName "Please enter username and password"
+#  AuthUserFile /home/xs692354/printable.jp/htpasswd/.htpasswd
+#  AuthGroupFile /dev/null
+#  require valid-user
+# 
+#  SetEnvIf Request_URI "^/administrator" admin_path  # ^/adminは, 管理画面URLに応じて変更してください
+#  <RequireAll>
+#      Require all granted
+#      Require not env admin_path
+#  </RequireAll>

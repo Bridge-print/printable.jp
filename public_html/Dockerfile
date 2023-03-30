@@ -1,9 +1,11 @@
-FROM php:7.3-apache-stretch
+ARG TAG=7.4-apache-bullseye
+FROM php:${TAG}
 
 ENV APACHE_DOCUMENT_ROOT /home/xs692354/printable.jp/public_html
 
-RUN apt-get update \
-  && apt-get install --no-install-recommends -y \
+RUN apt update \
+  && apt upgrade -y \
+  && apt install --no-install-recommends -y \
     apt-transport-https \
     apt-utils \
     build-essential \
@@ -23,13 +25,16 @@ RUN apt-get update \
     ssl-cert \
     unzip \
     zlib1g-dev \
-  && apt-get clean \
+    libwebp-dev \
+  && apt upgrade -y ca-certificates \
+  && apt clean \
   && rm -rf /var/lib/apt/lists/* \
   && echo "en_US.UTF-8 UTF-8" >/etc/locale.gen \
   && locale-gen \
   ;
 
 RUN docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
+  && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
   && docker-php-ext-install -j$(nproc) zip gd mysqli pdo_mysql opcache intl pgsql pdo_pgsql \
   ;
 
@@ -48,6 +53,8 @@ RUN mkdir -p ${APACHE_DOCUMENT_ROOT} \
 RUN a2enmod rewrite headers ssl
 # Enable SSL
 RUN ln -s /etc/apache2/sites-available/default-ssl.conf /etc/apache2/sites-enabled/default-ssl.conf
+# see https://stackoverflow.com/questions/73294020/docker-couldnt-create-the-mpm-accept-mutex/73303983#73303983
+RUN echo "Mutex posixsem" >> /etc/apache2/apache2.conf
 EXPOSE 443
 
 # Use the default production configuration
@@ -56,13 +63,28 @@ RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 COPY dockerbuild/php.ini $PHP_INI_DIR/conf.d/
 COPY dockerbuild/docker-php-entrypoint /usr/local/bin/
 
-RUN chown www-data:www-data /home/xs692354/printable.jp/public_html
+RUN chown www-data:www-data ${APACHE_DOCUMENT_ROOT} \
+  && mkdir -p ${APACHE_DOCUMENT_ROOT}/vendor \
+  && mkdir -p ${APACHE_DOCUMENT_ROOT}/var \
+  && chown www-data:www-data ${APACHE_DOCUMENT_ROOT}/vendor \
+  && chmod g+s ${APACHE_DOCUMENT_ROOT}/vendor \
+  && chmod g+s ${APACHE_DOCUMENT_ROOT} \
+  && mkdir -p /var/www \
+  && chown www-data:www-data /var/www
 
 RUN curl -sS https://getcomposer.org/installer \
   | php \
-  && mv composer.phar /usr/bin/composer \
-  && composer selfupdate --1
+  && mv composer.phar /usr/bin/composer
 
+# 全体コピー前にcomposer installを先行完了させる(docker cache利用によるリビルド速度向上)
+USER www-data
+RUN composer config -g repos.packagist composer https://packagist.jp
+# COPY composer.json ${APACHE_DOCUMENT_ROOT}/composer.json
+# COPY composer.lock ${APACHE_DOCUMENT_ROOT}/composer.lock
+# RUN composer install \
+#   --no-scripts \
+#   -d ${APACHE_DOCUMENT_ROOT} \
+#   ;
 
 ##################################################################
 # ファイル変更時、以後のステップにはキャッシュが効かなくなる
@@ -83,5 +105,6 @@ RUN if [ ! -f ${APACHE_DOCUMENT_ROOT}/var/eccube.db ] && [ ! ${SKIP_INSTALL_SCRI
         composer run-script installer-scripts && composer run-script auto-scripts \
         ; fi
 
+HEALTHCHECK --interval=10s --timeout=5s --retries=30 CMD pgrep apache
 
 USER root

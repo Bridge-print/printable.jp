@@ -34,7 +34,8 @@ parameters:
     eccube.theme: '%env(ECCUBE_TEMPLATE_CODE)%'
     eccube_theme_code: '%eccube.theme%'
     eccube_auth_magic: '%env(ECCUBE_AUTH_MAGIC)%'
-    eccube_auth_type: HMAC
+    eccube_auth_type: PLAIN
+  #  eccube_auth_type: HMAC
     eccube_password_hash_algos: SHA256
     eccube_theme_app_dir: '%kernel.project_dir%/app/template'
     eccube_theme_src_dir: '%kernel.project_dir%/src/Eccube/Resource/template'
