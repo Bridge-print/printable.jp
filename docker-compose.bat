@@ -19,7 +19,7 @@ docker exec -it printable_cube_db /bin/sh -c^
  "mysql -u dbuser -psecret -h cubeDB < /var/cube_data/xs692354_ec1.sql"
 
 REM composer install
-docker exec -it printable_web /bin/sh -c "export COMPOSER_PROCESS_TIMEOUT=1200 & composer install --no-scripts"
+docker exec -it printable_web /bin/sh -c "export COMPOSER_PROCESS_TIMEOUT=1200; composer install --no-scripts;"
 docker exec -it printable_web /bin/sh -c "bin/console eccube:composer:require-already-installed"
 
 REM DockerÄ‹N“®
