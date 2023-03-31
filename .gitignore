@@ -2,3 +2,4 @@ public_html/vendor/
 public_html/app/Plugin/.composer/cache
 public_html/var/
 develop_enviroment/
+public_html/composer.lock
