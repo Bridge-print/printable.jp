@@ -26,7 +26,23 @@ services:
        - backend
      volumes:
        - ../wp_data:/var/wp_data
-
+   cubeDB:
+     image: mysql:5.7
+     container_name: printable_cube_db
+     volumes:
+       - db_data:/var/lib/mysql
+     restart: always
+     environment:
+       MYSQL_ROOT_PASSWORD: root
+       MYSQL_DATABASE: xs692354_ec1
+       MYSQL_USER: dbuser
+       MYSQL_PASSWORD: secret
+     ports:
+       - 3307:3307
+     networks:
+       - backend
+     volumes:
+       - ../cube_data:/var/cube_data
    printable:
      container_name: printable_web
      build:
@@ -35,14 +51,31 @@ services:
          # ビルド時のECCubeインストールスクリプトをスキップする場合にtrueを指定する。
          # ビルド時点でDBサーバの起動や接続が出来ない、という場合等にエラーとなるため。
          SKIP_INSTALL_SCRIPT_ON_DOCKER_BUILD: "true"
+     env_file:
+       - .env.docker
      links:
        - db:db
+       - cubeDB:cubeDB
      depends_on:
        - db
+       - cubeDB
      ports:
-       - "8000:80"
+       - 8000:80
+       - 4300:443
      restart: always
      environment:
+       # EC-CUBE environments
+#        APP_ENV: "dev"
+#        APP_DEBUG: 0
+       DATABASE_URL: "mysql://dbuser:secret@cubeDB/xs692354_ec1"
+       DATABASE_SERVER_VERSION: 10
+       MAILER_URL: "smtp://smtp.kagoya.net:587?&auth_mode=login&username=kir018267.info-maekake&password=AV4G9z8F"
+       ECCUBE_AUTH_MAGIC: "<change.me>"
+#        ECCUBE_ADMIN_ROUTE: "administrator"
+#        ECCUBE_COOKIE_PATH: "/"
+#        ECCUBE_TEMPLATE_CODE: "printable"
+#        ECCUBE_LOCALE: "ja"
+       # WORDPRESS environments
        WORDPRESS_DB_HOST: db:3306
        WORDPRESS_DB_USER: wordpress
        WORDPRESS_DB_PASSWORD: wordpress
@@ -50,10 +83,13 @@ services:
        - backend
      volumes:
        - .:/home/xs692354/printable.jp/public_html
-
-   phpmyadmin:
+       ### 同期対象からコストの重いフォルダを除外 #####################
+       - ./var:/home/xs692354/printable.jp/public_html/var
+       - ./vendor:/home/xs692354/printable.jp/public_html/vendor
+       #- "node_modules:/home/xs692354/printable.jp/public_html/node_modules"
+   wp_phpmyadmin:
      image: phpmyadmin/phpmyadmin:latest
-     container_name: phpmyadmin_ingrid
+     container_name: printable_wp_phpmyadmin
      restart: always
      ports:
        - 4000:80
@@ -67,5 +103,24 @@ services:
      restart: always
      depends_on:
        - db
+     networks:
+       - backend
+
+   ec_phpmyadmin:
+     image: phpmyadmin/phpmyadmin:latest
+     container_name: printable_cube_phpmyadmin
+     restart: always
+     ports:
+       - 4001:80
+     links:
+       - cubeDB:cubeDB
+     environment:
+       - PMA_ARBITRARY=1
+       - PMA_HOST=cubeDB
+       - PMA_USER=dbuser
+       - PMA_PASSWORD=secret
+     restart: always
+     depends_on:
+       - cubeDB
      networks:
        - backend
