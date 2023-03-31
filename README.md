@@ -25,8 +25,8 @@ Printableは布製品へのプリントを請け負う通販サイト。
 2. ルートディレクトリのdocker-compose.batを実行
 3. [https://localhost:4300](https://localhost:4300)でプログラム処理の結果が表示できれば開発環境構築完了  
 	（Symfonyのエラー画面が表示される場合は、var/cache配下を削除し、再度アクセスしてみてください。）
-4. 商品画像等、ECcubeの機能で登録されたファイルは、本番サイトからFTPでwww/html/updateをダウンロード
-【注意】 デプロイ時はwww/app/config/eccube/packages/eccube.yamlの37行目の設定を削除、38行目のコメントアウトを外すこと
+4. 商品画像等、ECcubeの機能で登録されたファイルは、本番サイトからFTPで/html/updateをダウンロード
+【注意】 デプロイ時は/app/config/eccube/packages/eccube.yamlの37行目の設定を削除、38行目のコメントアウトを外すこと
  eccube_auth_type: 'HMAC' → 'PLAIN'（ログイン時の認証アーキテクチャの設定。PLAINは平文のまま検証。パスワードは平文で保存される。  
 
 ### ECcube管理画面
