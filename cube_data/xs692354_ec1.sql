@@ -975,7 +975,7 @@ CREATE TABLE IF NOT EXISTS `dtb_member` (
 
 INSERT INTO `dtb_member` (`id`, `work_id`, `authority_id`, `creator_id`, `name`, `department`, `login_id`, `password`, `salt`, `sort_no`, `two_factor_auth_key`, `two_factor_auth_enabled`, `create_date`, `update_date`, `login_date`, `discriminator_type`) VALUES
 (1, 1, 0, 1, '管理者', 'Printable', 'bridge', '2ba4a8aedcc4156635064274c3e8691208d598441719199e077c227a2ae75c51', 'hyPNyZPE9ujdMlY0', 1, NULL, 0, '2023-03-20 08:31:59', '2023-03-24 04:03:41', '2023-03-24 04:03:41', 'member'),
-(2, 1, 0, 2, '開発者', 'Bridge', 'developer', '0d2182d1d311baa68a976259657417ad83c49b15fc209b4e7a38ebf7e61da0aa', '69b392dcf2', 2, NULL, 0, '2023-03-20 09:04:02', '2023-03-27 00:59:53', '2023-03-27 00:59:53', 'member');
+(2, 1, 0, 2, '開発者', 'Bridge', 'developer', '0d2182d1d311baa68a976259657417ad83c49b15fc209b4e7a38ebf7e61da0aa', '69b392dcf2', 2, NULL, 0, '2023-03-20 09:04:02', '2023-03-27 00:59:53', '2023-03-27 00:59:53', 'member'),
 (3, 1, 0, 1, '管理者', 'local_developing', 'admin', 'password', '69b392dcf2', 2, NULL, 0, '2023-03-20 09:04:02', '2023-03-27 00:59:53', '2023-03-27 00:59:53', 'member');
 
 -- --------------------------------------------------------
