@@ -101,10 +101,10 @@ RUN find ${APACHE_DOCUMENT_ROOT} \( -path ${APACHE_DOCUMENT_ROOT}/vendor -prune 
 # ビルド時点でDBを起動出来ない場合等に指定が必要となる。
 ARG SKIP_INSTALL_SCRIPT_ON_DOCKER_BUILD=false
 
-RUN if [ ! -f ${APACHE_DOCUMENT_ROOT}/var/eccube.db ] && [ ! ${SKIP_INSTALL_SCRIPT_ON_DOCKER_BUILD} = "true" ]; then \
-        composer run-script installer-scripts && composer run-script auto-scripts \
-        ; fi
-
-HEALTHCHECK --interval=10s --timeout=5s --retries=30 CMD pgrep apache
+# RUN if [ ! -f ${APACHE_DOCUMENT_ROOT}/var/eccube.db ] && [ ! ${SKIP_INSTALL_SCRIPT_ON_DOCKER_BUILD} = "true" ]; then \
+#         composer run-script installer-scripts && composer run-script auto-scripts \
+#         ; fi
+# 
+# HEALTHCHECK --interval=10s --timeout=5s --retries=30 CMD pgrep apache
 
 USER root
